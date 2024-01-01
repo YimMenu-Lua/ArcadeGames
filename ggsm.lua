@@ -5,7 +5,7 @@ local WeaponSlot = 2811
 local PlayerLives = 4583
 local score = 7
 local kills = 5
-local sector = 3
+local powerUps = 4
 local timePlayed = 6
 local Position = 7
 local WeaponType = 48
@@ -24,14 +24,15 @@ local GGSM_POWERUPS = {
 local ggsm_lives
 local ggsm_score
 local ggsm_kills
+local ggsm_powerups_collected
 local ggsm_time_played
 local ggsm_pos
-local ggsm_sector
-local ggsm_godmode = false
-local ggsm_selected_weapon = 0
-local ggsm_selected_power = 0
-local ggsm_selected_slot = 0
-local ggsm_selected_sector = 0
+
+ggsm_godmode = false
+ggsm_selected_weapon = 0
+ggsm_selected_power = 0
+ggsm_selected_slot = 0
+ggsm_selected_sector = 0
 
 function ggsm_get_time_played()
     local ggsm_time_played = (MISC.GET_GAME_TIMER() - locals.get_int("ggsm_arcade", GGSMData + GameStats + timePlayed))
@@ -39,26 +40,25 @@ function ggsm_get_time_played()
     local hours = math.floor(seconds / 3600)
     local minutes = math.floor((seconds % 3600) / 60)
     local remaining_seconds = seconds % 60
-    
     return string.format("%02d:%02d:%02d", hours, minutes, remaining_seconds)
 end
 
 script.register_looped("GGSM", function (script)
-	if ggsm_godmode then
-		locals.set_int("ggsm_arcade", GGSMData + Entities + PlayerShipIndex + HP, MaxHP)
-	end
 	PlayerShipIndex = (1 + (locals.get_int("ggsm_arcade", 703 + 2680) * 56)) -- changes when you die
 	ggsm_lives = locals.get_int("ggsm_arcade", GGSMData + PlayerLives)
 	ggsm_score = locals.get_int("ggsm_arcade", GGSMData + GameStats + score)
 	ggsm_kills = locals.get_int("ggsm_arcade", GGSMData + GameStats + kills)
-	ggsm_sector = locals.get_int("ggsm_arcade", GGSMData + GameStats + kills)
+	ggsm_powerups_collected = locals.get_int("ggsm_arcade", GGSMData + GameStats + powerUps)
 	ggsm_pos = locals.get_vec3("ggsm_arcade", GGSMData + Entities + PlayerShipIndex + Position)
-	ggsm_time_played = ggsm_get_time_played()
+	ggsm_time_played = ggsm_get_time_played()	
+	if ggsm_godmode then
+		locals.set_int("ggsm_arcade", GGSMData + Entities + PlayerShipIndex + HP, MaxHP)
+	end
 end)
 
 function render_ggsm()
     local new_lives, changed = ImGui.InputInt("Lives", ggsm_lives)
-
+	
     if changed then
         ggsm_lives = math.max(1, math.min(100, new_lives))
         locals.set_int("ggsm_arcade", GGSMData + PlayerLives, ggsm_lives)
@@ -88,6 +88,7 @@ function render_ggsm()
 	ImGui.Separator()
 	
 	ImGui.Text("Kills: " .. ggsm_kills)
+	ImGui.Text("Power-Ups Collected: " .. ggsm_powerups_collected)
 	ImGui.Text("Time Played: " .. ggsm_time_played)
 	ImGui.Text("Position: " .. string.format("%.2f", ggsm_pos.x) .. ", " .. string.format("%.2f", ggsm_pos.y))
 	
@@ -105,7 +106,7 @@ function render_ggsm()
 	
 	ImGui.Text("Power-Ups")
 	
-	ggsm_selected_power = ImGui.Combo("Power-Ups", ggsm_selected_power, { "Decoy", "Nuke", "Repulse", "Shield", "Stun" }, 5)
+	ggsm_selected_power = ImGui.Combo("Power-Ups", ggsm_selected_power, { "Decoy", "Nuke", "Repulse", "Shield", "Stun" }, 5)	
 	ggsm_selected_slot = ImGui.Combo("Slot", ggsm_selected_slot, { "Defense", "Special" }, 2)
 	
 	if ImGui.Button("Select Power-Up") then

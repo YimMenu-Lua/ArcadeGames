@@ -12,6 +12,11 @@ ggsm_tab:add_imgui(function (script)
 	if is_script_active("ggsm_arcade") then
 		render_ggsm()
 	else
+		ggsm_godmode = false
+		ggsm_selected_weapon = 0
+		ggsm_selected_power = 0
+		ggsm_selected_slot = 0
+		ggsm_selected_sector = 0
 		ImGui.Text("Game is not running.")
 	end
 end)
