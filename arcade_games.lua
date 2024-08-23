@@ -37,7 +37,7 @@ local ggsm_selected_slot   = 0
 local ggsm_selected_sector = 1
 local ggsm_godmode         = false
 
-script.add_patch("ggsm_arcade", "GGSM Allow in SP", "56 ? ? 5D ? ? ? 55 ? ? 5D ? ? ? 4F", 0, { 0x2B, 0x00, 0x00 })
+local sp_patch = scr_patch:new("ggsm_arcade", "GGSM Allow in SP", "56 ? ? 5D ? ? ? 55 ? ? 5D ? ? ? 4F", 0, { 0x2B, 0x00, 0x00 })
 
 local function START_GAME(script_name)
     script.run_in_fiber(function()
