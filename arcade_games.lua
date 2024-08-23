@@ -40,15 +40,16 @@ local ggsm_godmode         = false
 local sp_patch = scr_patch:new("ggsm_arcade", "GGSM Allow in SP", "56 ? ? 5D ? ? ? 55 ? ? 5D ? ? ? 4F", 0, { 0x2B, 0x00, 0x00 })
 
 local function START_GAME(script_name)
-    script.run_in_fiber(function()
-        if SCRIPT.DOES_SCRIPT_EXIST("ggsm_arcade") then
-            SCRIPT.REQUEST_SCRIPT("ggsm_arcade")
-            if SCRIPT.HAS_SCRIPT_LOADED("ggsm_arcade") then
-                local thread = SYSTEM.START_NEW_SCRIPT("ggsm_arcade", 8344) -- SCRIPT_XML
-                SCRIPT.SET_SCRIPT_AS_NO_LONGER_NEEDED("ggsm_arcade")
-                if thread == 0 then
-                    gui.show_error("Arcade Games", "Failed to start game.")
-                end
+    script.run_in_fiber(function(script)
+        if SCRIPT.DOES_SCRIPT_EXIST(script_name) then
+            while not SCRIPT.HAS_SCRIPT_LOADED(script_name) do
+                SCRIPT.REQUEST_SCRIPT(script_name)
+                script:yield()
+            end
+            local thread = SYSTEM.START_NEW_SCRIPT(script_name, 8344) -- SCRIPT_XML
+            SCRIPT.SET_SCRIPT_AS_NO_LONGER_NEEDED(script_name)
+            if thread == 0 then
+                gui.show_error("Arcade Games", "Failed to start game.")
             end
         end
     end)
@@ -153,7 +154,6 @@ ggsm_tab:add_imgui(function()
     ggsm_selected_slot  = ImGui.Combo("Slot", ggsm_selected_slot, {"Defense", "Special"}, 2)
 
     if ImGui.Button("Select Power-Up") then
-        log.info(GGSM_POWERUPS[ggsm_selected_power + 1])
         locals.set_int("ggsm_arcade", GGSM_DATA + 2811 + (ggsm_selected_slot + 1), GGSM_POWERUPS[ggsm_selected_power + 1])
     end
 
