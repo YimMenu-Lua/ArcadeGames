@@ -37,7 +37,7 @@ local ggsm_selected_slot   = 0
 local ggsm_selected_sector = 1
 local ggsm_godmode         = false
 
-local sp_patch = scr_patch:new("ggsm_arcade", "GGSM Allow in SP", "56 ? ? 5D ? ? ? 55 ? ? 5D ? ? ? 4F", 0, { 0x2B, 0x00, 0x00 })
+sp_patch = scr_patch:new("ggsm_arcade", "GGSM Allow in SP", "56 ? ? 5D ? ? ? 55 ? ? 5D ? ? ? 4F", 0, { 0x2B, 0x00, 0x00 })
 
 local function START_GAME(script_name)
     script.run_in_fiber(function(script)
@@ -90,6 +90,10 @@ local function GGSM_LOOP()
         locals.set_int("ggsm_arcade", GGSM_DATA + 484 + (1 + (ggsm_player_index * 56)) + 23, 4)
     end
 end
+
+event.register_handler(menu_event.ScriptsReloaded, function()
+    sp_patch:disable_patch()
+end)
 
 script.register_looped("Arcade Games", function()
     GGSM_LOOP()
