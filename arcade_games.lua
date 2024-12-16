@@ -3,7 +3,7 @@ local arcade_games_tab = gui.get_tab("Arcade Games")
 
 local ggsm_tab = arcade_games_tab:add_tab("Go Go Space Monkey 3")
 
-local GGSM_DATA = 705
+local GGSM_DATA = 726
 
 local GGSM_POWERUPS = { 44, 49, 50, 53, 54 }
 local GGSM_WEAPONS  = {
